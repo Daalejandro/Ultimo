@@ -1,1 +1,206 @@
-esto es una prueba awjr lwk lkef 
+                 ED_euler
+clc;
+clear variables;
+syms y t;
+disp('Método de Euler')
+f = input('\nIntroduzca la función f(t,y): '); %(log(t)-y)/(t+1)
+a = input('Introduzca el valor a: '); %1
+b = input('Introduzca el valor b: '); %61/60
+h = input('Introduzca el valor h: '); %1/300
+yI = input('Introduzca el valor de la condición inicial y(a)= '); %10
+
+strED = input('\nED original en comillas: '); %'Dy=(log(t)-y)/(t+1))'
+strYI = input('Valor inicial de la forma y(a)=k entre comillas: '); %'y(1)=10'
+
+ts = a:h:b;
+n = length(ts);
+w = zeros(1,n);
+
+w(1) = yI;
+for i=1:n-1
+    w(i+1) = w(i)+(h*subs(f,[t,y],[ts(i),w(i)]));   
+end
+
+%solucion exacta
+exacta = dsolve(strED, strYI);
+Y = subs(exacta, ts);
+fprintf('\nED exacta:\n ')
+pretty(simplify(exacta))
+
+fprintf('\n N° \t\t\t ti \t\t\t wi + 1 \t\t\t Yi\n')
+for i=1:n
+    %fprintf('%2.0f  %9.15f \t %9.15f \t %9.15f \n',i,double(ts(i)),double(w(i)));
+    fprintf('%2.0f  %9.15f \t %9.15f \t %9.15f \n',i,double(ts(i)),double(w(i)),double(Y(i)));
+end
+E=[ts;w]; %matriz bidimensional para Neville
+%X=E(:,1);Y=E(:,2);X0=valor;
+%[Q]=Neville_ED(X,Y,X0);
+
+                     ED_Rk_Heun
+clc;
+clear variables;
+syms x y t;
+disp('Métodos de Runge-Kutta: Método de Heun')
+f = input('\nIntroduzca la función f(t,y): '); %-(2*t*tan(y)+5)/(t^2*sec(y)^2)
+a = input('Introduzca el valor a: ');
+b = input('Introduzca el valor b: ');
+h = input('Introduzca el valor h: ');
+yI = input('Introduzca el valor de la condición inicial y(a)= '); %pi/4
+
+strED = input('\nED original en comillas: ');%'Dy*(t^2*sec(y)^2)=-(2*t*tan(y)+5)'
+strYI = input('Valor inicial de la forma y(a)=k entre comillas: '); %'y(1/2)=pi/4'
+
+ts = a:h:b;
+n = length(ts);
+w = zeros(1,n);
+
+w(1) = yI;
+for i=1:n-1
+    subs1 = ts(i) + (2*h)/3;
+    subs2 = w(i) + ((2*h)/3)*subs(f,[t,y],[ts(i),w(i)]);
+    w(i+1) = w(i) + (h/4)*subs(f,[t,y],[ts(i),w(i)]) + (3*h/4)*subs(f,[t,y],[subs1,subs2]);
+end
+
+%solucion exacta
+exacta = dsolve(strED, strYI);
+Y = subs(exacta, ts);
+fprintf('\nED exacta:\n ')
+pretty(simplify(exacta))
+
+fprintf('\n N° \t\t\t ti \t\t\t wi + 1 \t\t\t Yi \n')
+for i=1:n
+   
+    fprintf('%2.0f  %9.15f \t %9.15f \t %9.15f \n',i,double(ts(i)),double(w(i)),double(Y(i)));
+end
+
+    E=[ts;w]; %matriz bidimensional para Neville
+%X=E(:,1);Y=E(:,2);X0=valor;
+%[Q]=Neville_ED(X,Y,X0);
+                                    ED_RK_EulerModificado
+clc;
+clear variables;
+syms x y t;
+disp('Métodos de Runge-Kutta: Método modificado de Euler')
+f = input('\nIntroduzca la función f(t,y): '); %(log(t)-y)/(t+1)
+a = input('Introduzca el valor a: ');
+b = input('Introduzca el valor b: ');
+h = input('Introduzca el valor h: ');
+yI = input('Introduzca el valor de la condición inicial y(a)= '); %10
+
+strED = input('\nED original en comillas: '); %'Dy=(log(t)-y)/(t+1)'
+strYI = input('Valor inicial de la forma y(a)=k entre comillas: '); %'y(1)=10'
+
+ts = a:h:b;
+n = length(ts);
+w = zeros(1,n);
+
+w(1) = yI;
+for i=1:n-1
+    subs1 = ts(i+1);
+    subs2 = w(i) + h*subs(f,[t,y],[ts(i),w(i)]);
+    w(i+1) = w(i) + (h/2)*subs(f,[t,y],[ts(i),w(i)]) + (h/2)*subs(f,[t,y],[subs1,subs2]);
+end
+
+%solucion exacta
+exacta = dsolve(strED, strYI);
+Y = subs(exacta, ts);
+fprintf('\nED exacta:\n ')
+pretty(simplify(exacta))
+
+fprintf('\n N° \t\t\t ti \t\t\t wi + 1 \t\t\t Yi \n')
+for i=1:n
+    %fprintf('%2.0f  %9.15f \t %9.15f \n',i,double(ts(i)),double(w(i)));
+    fprintf('%2.0f  %9.15f \t %9.15f \t %9.15f \n',i,double(ts(i)),double(w(i)),double(Y(i)));
+end
+E=[ts;w]; %matriz bidimensional para Neville
+%X=E(:,1);Y=E(:,2);X0=valor;
+%[Q]=Neville_ED(X,Y,X0);
+                            ED_RK_Orden4
+clc;
+clear variables;
+syms x y t T;
+disp('Métodos de Runge-Kutta: Orden Cuatro')
+f = input('\nIntroduzca la función f(t,y): '); %(y^2+3*t*y)/(4*t^2+t*y)
+a = input('Introduzca el valor a: '); %1
+b = input('Introduzca el valor b: '); %7/5
+h = input('Introduzca el valor h: '); %1/10
+yI = input('Introduzca el valor de la condición inicial y(a)= '); %1
+
+strED = input('\nED original en comillas: '); %'Dy*(4*t^2+t*y)=(y^2+3*t*y)'
+strYI = input('Valor inicial de la forma y(a)=k entre comillas: '); %'y(1)=1'
+
+ts = a:h:b;
+n = length(ts);
+w = zeros(1,n);
+valK = zeros(n,4);
+
+w(1) = yI;
+for i=1:n-1
+    k1 = h*subs(f,[t,y],[ts(i),w(i)]);
+    k2 = h*subs(f,[t,y],[ts(i) + h/2 , w(i) + (1/2)*k1]);
+    k3 = h*subs(f,[t,y],[ts(i) + h/2 , w(i) + (1/2)*k2]);
+    k4 = h*subs(f,[t,y],[ts(i+1) , w(i) + k3]);
+    valK(i+1,:) = [k1 k2 k3 k4];
+    
+    w(i+1) = w(i) + (1/6)*(k1 + 2*k2 +2*k3 + k4);
+    fprintf('\ni= %2.0f \n\n',i-1);
+    fprintf('k1= %9.15f \n',double(valK(i+1,1)));
+    fprintf('k2= %9.15f \n',double(valK(i+1,2)));
+    fprintf('k3= %9.15f \n',double(valK(i+1,3)));
+    fprintf('k4= %9.15f \n',double(valK(i+1,4)));
+   
+end
+%solucion exacta
+exacta = dsolve(strED, strYI);
+Y = subs(exacta, ts);
+fprintf('\nED exacta:\n ')
+pretty(simplify(exacta))
+
+fprintf('\n N° \t\t\t ti \t\t\t wi + 1 \t\t\t Yi \n')
+for i=1:n
+    fprintf('%2.0f  %9.15f \t %9.15f \t %9.15f \n',i,double(ts(i)),double(w(i)), double(Y(i)));
+end
+                                 ED_RK_PuntoMedio
+clc;
+clear variables;
+syms y t;
+disp('Métodos de Runge-Kutta: Punto Medio')
+f = input('\nIntroduzca la función f(t,y): '); %(log(t)-y)/(t+1)
+a = input('Introduzca el valor a: '); %1
+b = input('Introduzca el valor b: '); %1.1
+h = input('Introduzca el valor h: '); %1/50
+yI = input('Introduzca el valor de la condición inicial y(a)= '); %10
+
+strED = input('\nED original en comillas: '); %'Dy=(log(t)-y)/(t+1)'
+strYI = input('Valor inicial de la forma y(a)=k entre comillas: ');%'y(1)=10'
+
+ts = a:h:b;
+n = length(ts);
+w = zeros(1,n);
+
+w(1) = yI;
+for i=1:n-1
+    subs1 = ts(i)+(h/2);
+    subs2 = w(i) + (h/2)*subs(f,[t,y],[ts(i),w(i)]);
+    w(i+1) = w(i) + h*subs(f,[t,y],[subs1,subs2]);
+end
+
+%solucion exacta
+exacta = dsolve(strED, strYI);
+Y = subs(exacta, ts);
+fprintf('\nED exacta:\n ')
+pretty(simplify(exacta))
+
+fprintf('\n N° \t\t\t ti \t\t\t wi + 1 \t\t\t Yi\n')
+for i=1:n
+    %fprintf('%2.0f  %9.15f \t %9.15f \n',i,double(ts(i)),double(w(i)));
+    fprintf('%2.0f  %9.15f \t %9.15f \t %9.15f \n',i,double(ts(i)),double(w(i)),double(Y(i)));
+end
+E=[ts;w]; %matriz bidimensional para Neville
+%X=E(:,1);Y=E(:,2);X0=valor;
+%[Q]=Neville_ED(X,Y,X0);
+
+
+
+
+
